@@ -1,1 +1,336 @@
-<html><head><meta charset="UTF-8"><script>if (!document.referrer.includes('index.html')) { window.location.href = 'index.html'; }</script></head><body><h1>Bienvenue sur le tableau de bord SG</h1><p>Page de simulation complète ici (solde, virements...)</p></body></html>
+<!doctype html>
+<html lang="fr"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>SG - Espace Client</title> 
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background-color: #fff;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-square {
+      width: 40px;
+      height: 40px;
+      background-color: #e60028;
+      margin-right: 10px;
+      position: relative;
+    }
+
+    .logo-square::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 20px;
+      height: 20px;
+      background-color: #000;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .logout-button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      margin-left: 20px;
+      font-weight: bold;
+      color: #555;
+      font-size: 16px;
+    }
+
+    .main-content {
+      padding: 30px;
+    }
+
+    .balance-label {
+      font-size: 18px;
+      color: #666;
+      text-transform: uppercase;
+    }
+
+    .balance {
+      font-size: 48px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 5px 0 15px 0;
+    }
+
+    .account-status {
+      font-size: 28px;
+      font-weight: bold;
+      color: #d9534f;
+      padding: 10px;
+      border-radius: 5px;
+      animation: blinker 1.5s linear infinite;
+    }
+
+    @keyframes blinker {
+      50% {
+        opacity: 0.2;
+      }
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .transactions-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .transactions-table th, .transactions-table td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #e9e9e9;
+    }
+
+    .transactions-table thead th {
+      background-color: #f9f9f9;
+      font-weight: bold;
+      color: #555;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+
+    .transactions-table tbody td {
+      color: #333;
+      font-size: 16px;
+    }
+
+    .credit {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .debit {
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #e60028;
+      color: white;
+      border: none;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #c00022;
+    }
+
+    .success-message {
+      background-color: #d1e7dd;
+      color: #0f5132;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 20px;
+      display: none;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .nav {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .nav button {
+      flex: 1;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+
+    .nav button.active {
+      background-color: #e60028;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style> 
+ </head> 
+ <body> 
+  <div class="container"> 
+   <header class="header"> 
+    <div class="logo"> 
+     <div class="logo-square"></div> <span class="logo-text" style="font-size: 24px; font-weight: bold;">SG</span> 
+    </div> 
+    <div class="user-info"> <span>PIERRE VALENT</span> <button class="logout-button">DÉCONNEXION</button> 
+    </div> 
+   </header> 
+   <div class="main-content"> 
+    <div class="nav"> <button id="btnDashboard" class="active" onclick="toggleView('dashboard')">Tableau de bord</button> <button id="btnVirement" onclick="toggleView('virement')">Faire un virement</button> 
+    </div> <!-- Tableau de bord --> 
+    <div id="dashboard"> 
+     <div class="balance-label">
+      Solde du compte
+     </div> 
+     <div class="balance" id="currentBalance">
+      1 700 000 €
+     </div> 
+     <div class="account-status">
+      COMPTE BLOQUÉ
+     </div> 
+     <h3 class="section-title">Historique des Transactions</h3> 
+     <table class="transactions-table" id="transactionsTable"> 
+      <thead> 
+       <tr> 
+        <th>Date</th> 
+        <th>Description</th> 
+        <th>Montant</th> 
+       </tr> 
+      </thead> 
+      <tbody></tbody> 
+     </table> 
+    </div> <!-- Formulaire de virement --> 
+    <div id="virement" class="hidden"> 
+     <div class="form-group"> <label for="iban">IBAN / Numéro de compte</label> 
+      <input type="text" id="iban" placeholder="FR76 3000 6000 0112 3456 7890 189"> 
+     </div> 
+     <div class="form-group"> <label for="amount">Montant (€)</label> 
+      <input type="number" id="amount" placeholder="Ex : 1500"> 
+     </div> 
+     <div class="form-group"> <label for="motif">Motif</label> <textarea id="motif" rows="3" placeholder="Ex : Paiement facture, don, etc."></textarea> 
+     </div> <button onclick="effectuerVirement()">Valider le Virement</button> 
+     <div class="success-message" id="successMessage">
+      ✅ Virement effectué avec succès !
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+  <script>
+    let solde = parseFloat(localStorage.getItem("solde")) || 1700000;
+
+    function updateDashboard() {
+      document.getElementById("currentBalance").innerText = solde.toLocaleString("fr-FR") + " €";
+      const tableBody = document.querySelector("#transactionsTable tbody");
+      tableBody.innerHTML = "";
+      const historique = JSON.parse(localStorage.getItem("transactions") || "[]");
+
+      historique.forEach(tx => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${tx.date}</td>
+          <td>${tx.description}</td>
+          <td class="${tx.montant > 0 ? 'credit' : 'debit'}">
+            ${tx.montant > 0 ? '+' : '-'} ${Math.abs(tx.montant).toLocaleString("fr-FR")} €
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function effectuerVirement() {
+      const iban = document.getElementById("iban").value;
+      const amount = parseFloat(document.getElementById("amount").value);
+      const motif = document.getElementById("motif").value;
+
+      if (!iban || isNaN(amount) || amount <= 0) {
+        alert("Veuillez remplir tous les champs correctement.");
+        return;
+      }
+
+      solde -= amount;
+      localStorage.setItem("solde", solde);
+      const date = new Date().toLocaleDateString("fr-FR");
+
+      let historique = JSON.parse(localStorage.getItem("transactions") || "[]");
+      historique.unshift({
+        date: date,
+        description: `Virement SEPA - ${motif || 'Aucun motif'}`,
+        montant: -amount,
+      });
+      localStorage.setItem("transactions", JSON.stringify(historique));
+
+      document.getElementById("successMessage").style.display = "block";
+      updateDashboard();
+      toggleView('dashboard');
+    }
+
+    function toggleView(view) {
+      document.getElementById("dashboard").classList.add("hidden");
+      document.getElementById("virement").classList.add("hidden");
+      document.getElementById("btnDashboard").classList.remove("active");
+      document.getElementById("btnVirement").classList.remove("active");
+
+      document.getElementById(view).classList.remove("hidden");
+      document.getElementById("btn" + capitalize(view)).classList.add("active");
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // Initialisation
+    updateDashboard();
+  </script> 
+ </body>
+  </html>
